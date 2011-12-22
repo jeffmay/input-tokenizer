@@ -10,7 +10,6 @@ if(head && head.js)
     );
 }
 
-// TODO: Convert to jQuery widget called input-tokenizer
 $.fn.WordTokenizer = function() {
     if(typeof arguments[0] == 'string') {
         var args = Array.prototype.slice.call(arguments);
@@ -95,8 +94,9 @@ function WordTokenizer(element, params) {
         },
 
         addTokens: function(tokens) {
+            var tokenValues;
             if(typeof tokens == 'string') {
-                tokens = $.map(tokens.split(','), function(str) {
+                tokenValues = $.map(tokens.split(','), function(str) {
                     var addr = $.trim(str);
                     if(addr.length == 0) {
                         return null;
@@ -106,19 +106,23 @@ function WordTokenizer(element, params) {
                     }
                 });
             }
+            else {
+                tokenValues = tokens;
+            }
             // TODO: Support adding token jQuery objects
-            var tokenArray = new Array(tokens.length);
-            for(var i in tokens) {
-                var email = tokens[i];
+            var tokenArray = new Array(tokenValues.length);
+            for(var i=0; i<tokenValues.length; i++) {
+                var email = tokenValues[i];
                 var token = $('<span class="token"/>')
+                    .data('email', email)
                     .click(function() {
-                        self.selectToken(email);
+                        self.selectToken($(this).data('email'));
                     })
                     .append('<span>' + email + '</span>')
                     .append($('<button type="button" class="close-token">X</button>')
                         .button()
                         .click(function() {
-                            self.removeToken(email, false);
+                            self.removeToken($(this).closest('*.token').data('email'), false);
                         })
                     )
                     .keydown(function(keyEvent) {
@@ -126,7 +130,7 @@ function WordTokenizer(element, params) {
                         if(token.hasClass(self.options.highlightTokenClass) &&
                                 (code == 8 || code == 46))
                         {
-                            self.removeToken(email, true);
+                            self.removeToken($(this).data('email'), true);
                             return false;
                         }
                     })
