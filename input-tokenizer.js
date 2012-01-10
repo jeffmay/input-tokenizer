@@ -43,21 +43,21 @@
         });
     };
 
-    $.fn.WordTokenizer = function() {
+    $.fn.InputTokenizer = function() {
         if(typeof arguments[0] == 'string') {
             var args = Array.prototype.slice.call(arguments);
             var method = args.shift();
-            return $(this).data('WordTokenizer')[method](args);
+            return $(this).data('InputTokenizer')[method](args);
         }
         else {
             var params = arguments[0];
             return this.each(function() {
-                new WordTokenizer(this, params);
+                new InputTokenizer(this, params);
             });
         }
     };
 
-    function WordTokenizer(element, params) {
+    function InputTokenizer(element, params) {
         var node = $(element);
         if(node == null) {
             throw "Could not find element with id, '" + id + "'";
@@ -85,7 +85,7 @@
                 self.field = node.clone(true)
                     .attr({
                         // Replace the id and name, so it doesn't conflict
-                        id: node[0].id + '_WordTokenizer',
+                        id: node[0].id + '_InputTokenizer',
                         name: node[0].name + '_display'
                     })
                     .keydown(function(keyEvent) {
@@ -122,7 +122,7 @@
                     .append(self.tokenList).insertAfter(self.field)
                 ;
                 self.tokenWrapper.append(self.field);
-                node.data('WordTokenizer', self);
+                node.data('InputTokenizer', self);
                 self.addTokens(self.field.val());
             },
 
@@ -272,7 +272,7 @@
         self.init();
     }
 
-    WordTokenizer.prototype.parseTokenValue = function(tokenNode) {
+    InputTokenizer.prototype.parseTokenValue = function(tokenNode) {
         var val = null;
         if(tokenNode.length === undefined) {
             val = tokenNode.childNodes[0].innerHTML;
